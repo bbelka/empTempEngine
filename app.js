@@ -14,63 +14,73 @@ const render = require("./lib/htmlRenderer");
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
 
-inquirer.prompt([
-    {
-        type: "input",
-        name: "name",
-        message: "What is the employee's name?"
-    },
-    {
-        type: "input",
-        name: "id",
-        message: "What is the employee's id?"
-    },
-    {
-        type: "input",
-        name: "email",
-        message: "What is the employee's email?"
-    },
-    {
-        type: "list",
-        name: "title",
-        message: "What is the employee's position title?",
-        choices: [
-            "Intern",
-            "Engineer",
-            "Manager"
-        ]
-    },
-]).then(function (data) {
-    if (data.title === "Intern") {
-        inquirer.prompt([
+async function askQuestions() {
+    try {
+        const { mainData } = await inquirer.prompt([
             {
                 type: "input",
-                name: "school",
-                message: "What shool does the Intern go to?"
-            }
-        ])
-    } else if (data.title === "Engineer") {
-        inquirer.prompt([
+                name: "name",
+                message: "What is the employee's name?"
+            },
             {
                 type: "input",
-                name: "github",
-                message: "What is the Engineer's github username?"
-            }
-        ])
-    } else if (data.title === "Manager") {
-        inquirer.prompt([
+                name: "id",
+                message: "What is the employee's id?"
+            },
             {
                 type: "input",
-                name: "officeNumber",
-                message: "What is the Manager's office number?"
+                name: "email",
+                message: "What is the employee's email?"
+            },
+            {
+                type: "list",
+                name: "title",
+                message: "What is the employee's position title?",
+                choices: [
+                    "Intern",
+                    "Engineer",
+                    "Manager"
+                ]
             }
-        ])
+        ]).then(function (data) {
+            if (data.title === "Intern") {
+                inquirer.prompt([
+                    {
+                        type: "input",
+                        name: "school",
+                        message: "What shool does the Intern go to?"
+                    }
+                ])
+            }
+            else if (data.title === "Engineer") {
+                inquirer.prompt([
+                    {
+                        type: "input",
+                        name: "github",
+                        message: "What is the Engineer's github username?"
+                    }
+                ])
+            }
+            else if (data.title === "Manager") {
+                inquirer.prompt([
+                    {
+                        type: "input",
+                        name: "officeNumber",
+                        message: "What is the Manager's office number?"
+                    }
+                ])
+            }
+        })
+    } catch (err) {
+        console.log(err);
     }
-})
-
+}
+askQuestions();
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
 // generate and return a block of HTML including templated divs for each employee!
+
+
 
 // After you have your html, you're now ready to create an HTML file using the HTML
 // returned from the `render` function. Now write it to a file named `team.html` in the
