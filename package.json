@@ -1,0 +1,29 @@
+{
+  "name": "emptempengine",
+  "version": "1.0.0",
+  "description": "Node-based employee template engine",
+  "main": "app.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bbelka/empTempEngine.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bbelka/empTempEngine/issues"
+  },
+  "homepage": "https://github.com/bbelka/empTempEngine#readme",
+  "dependencies": {
+    "fs": "0.0.1-security",
+    "inquirer": "^7.1.0",
+    "jest": "^25.2.7"
+  }
+}
