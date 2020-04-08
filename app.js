@@ -10,90 +10,115 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
+const questions = [
+    {
+        type: "input",
+        name: "name",
+        message: "What is the employee's name?"
+    },
+    {
+        type: "number",
+        name: "id",
+        message: "What is the employee's id?"
+    },
+    {
+        type: "input",
+        name: "email",
+        message: "What is the employee's email?"
+    },
+    {
+        type: "list",
+        name: "title",
+        message: "What is the employee's position title?",
+        choices: [
+            "Intern",
+            "Engineer",
+            "Manager"
+        ]
+    },
+    {
+        type: "input",
+        name: "school",
+        message: "What shool does the Intern go to?",
+        when: (answers) => answers.title === "Intern"
+    },
+    {
+        type: "input",
+        name: "github",
+        message: "What is the Engineer's github username?",
+        when: (answers) => answers.title === "Engineer"
+    },
+    {
+        type: "input",
+        name: "officeNumber",
+        message: "What is the Manager's office number?",
+        when: (answers) => answers.title === "Manager"
+    },
+    {
+        type: "confirm",
+        name: "keepGoing",
+        message: "Would you like to keep entering employees?"
+    }
+]
 
-// Write code to use inquirer to gather information about the development team members,
-// and to create objects for each team member (using the correct classes as blueprints!)
+const empData = []
 
-async function askQuestions() {
-    try {
-        const { mainData } = await inquirer.prompt([
-            {
-                type: "input",
-                name: "name",
-                message: "What is the employee's name?"
-            },
-            {
-                type: "input",
-                name: "id",
-                message: "What is the employee's id?"
-            },
-            {
-                type: "input",
-                name: "email",
-                message: "What is the employee's email?"
-            },
-            {
-                type: "list",
-                name: "title",
-                message: "What is the employee's position title?",
-                choices: [
-                    "Intern",
-                    "Engineer",
-                    "Manager"
-                ]
-            }
-        ]).then(function (data) {
-            if (data.title === "Intern") {
-                inquirer.prompt([
-                    {
-                        type: "input",
-                        name: "school",
-                        message: "What shool does the Intern go to?"
-                    }
-                ])
-            }
-            else if (data.title === "Engineer") {
-                inquirer.prompt([
-                    {
-                        type: "input",
-                        name: "github",
-                        message: "What is the Engineer's github username?"
-                    }
-                ])
-            }
-            else if (data.title === "Manager") {
-                inquirer.prompt([
-                    {
-                        type: "input",
-                        name: "officeNumber",
-                        message: "What is the Manager's office number?"
-                    }
-                ])
-            }
-        })
-    } catch (err) {
-        console.log(err);
+const ask = () => inquirer.prompt(questions).then(doStuff);
+
+const doStuff = (answers) => {
+    empData.push(answers);
+    if (answers.keepGoing) {
+        ask();
+    } else {
+        write(empData);
     }
 }
-askQuestions();
-// After the user has input all employees desired, call the `render` function (required
-// above) and pass in an array containing all employee objects; the `render` function will
-// generate and return a block of HTML including templated divs for each employee!
 
+const employees = [];
 
+const write = () => {
+    empData.forEach(employee => {
+        let newEmp
+        if (employee.title === "Manager") {
+            let name = employee.name;
+            let id = employee.id;
+            let email = employee.email;
+            let officeNumber = employee.officeNumber;
+            newEmp = new Manager(name, id, email, officeNumber);
+        } else if (employee.title === "Intern") {
+            let name = employee.name;
+            let id = employee.id;
+            let email = employee.email;
+            let school = employee.school;
+            newEmp = new Intern(name, id, email, school);
+        } else if (employee.title === "Engineer") {
+            let name = employee.name;
+            let id = employee.id;
+            let email = employee.email;
+            let github = employee.github;
+            newEmp = new Engineer(name, id, email, github);
+        };
+        employees.push(newEmp);
+        
 
-// After you have your html, you're now ready to create an HTML file using the HTML
-// returned from the `render` function. Now write it to a file named `team.html` in the
-// `output` folder. You can use the variable `outputPath` above target this location.
-// Hint: you may need to check if the `output` folder exists and create it if it
-// does not.
+    })
+    console.log(employees);
+    writeHTML(employees);
+};
 
-// HINT: each employee type (manager, engineer, or intern) has slightly different
-// information; write your code to ask different questions via inquirer depending on
-// employee type.
+const writeHTML = (employees) => {
+    const renderedHTML = render(employees);
+    console.log(renderedHTML);
 
-// HINT: make sure to build out your classes first! Remember that your Manager, Engineer,
-// and Intern classes should all extend from a class named Employee; see the directions
-// for further information. Be sure to test out each class and verify it generates an 
-// object with the correct structure and methods. This structure will be crucial in order
-// for the provided `render` function to work!```
+    fs.writeFile(outputPath, renderedHTML, function (err) {
+
+        if (err) {
+            return console.log(err);
+        }
+
+        console.log("Successfully written!");
+
+    })
+}
+
+ask();
